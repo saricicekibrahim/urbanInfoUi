@@ -75,9 +75,9 @@
 			doSmt(){
 				this.cars = 
 				[
-        { "name":"Ford",},
-        { "name":"BMW", },
-        { "name":"Fiat" }
+        { "name":"Mahalle",},
+        { "name":"Parsel", },
+        { "name":"Önemli Nokta" }
     ]
 			},
 			clearSearchResult(){
