@@ -19,8 +19,10 @@
 					</thead>
 					<tbody>
 						<tr v-for="parcel in parcels">
-							<td v-on:click="eben(parcel.first)">{{parcel.first}}</td>
-							<td v-on:click="eben(parcel.first)">{{parcel.first}}</td>
+							<td>
+								<button v-on:click="zoomParcel()" type="button" class="btn btn-outline-info btn-sm" href="#" data-toggle="tooltip" title="Göster!">{{parcel.properties.ada_parsel}}</button>
+							</td>
+							<td>{{parcel.properties.mahalle_id}}</td>
 						</tr>
 					</tbody>
 				</table>	
@@ -60,18 +62,19 @@
 				}
 
 			},
-			eben(argName){
-				this.$parent.map.setView([15.3, 32.9], 13);
+			zoomParcel(){
+				this.$parent.map.setView([39.9 + Math.random() * 0.1, 32.9 + Math.random() * 0.1], 13);
 			},
 			fetchParcels(){
 				this.parcels = [];
-				const p = this.$http.get('https://raw.githubusercontent.com/robconery/json-sales-data/master/data/customers.json');
+				const p = this.$http.get('http://saricicek.epac.to:8080/geoserver/urbanInfo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=urbanInfo:parcel&maxFeatures=10&outputFormat=application%2Fjson');
 				this.$refs.loadingScreen.load(p);
 				p.then(function(response){
-					for(var i = 0 ; i<40; i++)
-					{
-						this.parcels.push(response.body[i]);
-					}
+					let parcelFeatures=[];
+					$.each(response.body.features, function(key, value) {
+     					parcelFeatures.push(value);
+   					});
+   					this.parcels = parcelFeatures;
 				});
 			}
 
@@ -88,33 +91,33 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-	.sidenav {
-		height: 100%;
-		width: 0;
-		position: fixed;
-		z-index: 500;
-		top: 55px;
-		left: 0;
-		background-color: white;
-		overflow-x: hidden;
-		transition: 0.5s;
-		margin-top: 2px;
-		box-shadow: 0 0 20px rgba(0,0,0,3);
-		opacity:.9;
-	}
+.sidenav {
+	height: 100%;
+	width: 0;
+	position: fixed;
+	z-index: 500;
+	top: 55px;
+	left: 0;
+	background-color: white;
+	overflow-x: hidden;
+	transition: 0.5s;
+	margin-top: 2px;
+	box-shadow: 0 0 20px rgba(0,0,0,3);
+	opacity:.9;
+}
 
-	.sidenav .closebtn {
-		position: absolute;
-		margin-top: 10px;
-		right: 15px;
-		font-size: 24px;
-		margin-left: 50px;
-		color: black;
-	}
+.sidenav .closebtn {
+	position: absolute;
+	margin-top: 10px;
+	right: 15px;
+	font-size: 24px;
+	margin-left: 50px;
+	color: black;
+}
 
-	.panel-header {
-		box-shadow: 0 0 5px rgba(0,0,0,1);
-	}
+.panel-header {
+	box-shadow: 0 0 5px rgba(0,0,0,1);
+}
 
 
 </style>

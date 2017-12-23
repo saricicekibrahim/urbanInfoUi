@@ -27,27 +27,26 @@
 			</li>
 			<form class="form-inline my-2 my-lg-0">
 				<input class="form-control mr-sm-2" type="text" aria-label="Ara" placeholder="Mahalle, Parsel, Poi, vs...">
-
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit" v-on:click="doSmt()">Ara</button>
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit" v-on:click="searchAll($event)">Ara</button>
 			</form>
 		</div>
 	</nav>
-				<div class="eben text-center" v-if="cars.length > 0">
-					<ul v-for="car in cars" class="list-group">
-					  <li class="list-group-item d-flex justify-content-between align-items-center">{{car.name}}
-					          <span class="badge badge-primary badge-pill">14</span></li>
-					</ul>
-					<button class="btn btn-outline-danger" v-on:click="clearSearchResult">Kapat</button>
+	<div class="search-all text-center" v-if="cars.length > 0">
+		<ul v-for="car in cars" class="list-group">
+			<li class="list-group-item d-flex justify-content-between align-items-center">{{car.name}}
+				<span class="badge badge-primary badge-pill">14</span></li>
+			</ul>
+			<button class="btn btn-outline-danger" v-on:click="clearSearchResult">Kapat</button>
 
-				</div>
+		</div>
 
-	<Parcel ref="parcel"/>
-	<div id="map" style="height: 2000px;">
+		<Parcel ref="parcel"/>
+		<div id="map" style="height: 2000px;">
+
+		</div>
+
 
 	</div>
-
-
-</div>
 </template>
 
 <script>
@@ -69,16 +68,17 @@
 		},
 		methods: { 
 			parcelPanel(){
-				var child = this.$refs.parcel;
-				child.parcelPanel();
+				var parcelVue = this.$refs.parcel;
+				parcelVue.parcelPanel();
 			},
-			doSmt(){
+			searchAll(event){
 				this.cars = 
 				[
-        { "name":"Mahalle",},
-        { "name":"Parsel", },
-        { "name":"Önemli Nokta" }
-    ]
+				{ "name":"Mahalle",},
+				{ "name":"Parsel", },
+				{ "name":"Önemli Nokta" }
+				];
+				event.preventDefault();
 			},
 			clearSearchResult(){
 				this.cars = [];
@@ -100,21 +100,21 @@
 	margin-top: 57px;
 }
 
-	.eben {
-		height: 100%;
-		width: 25%;
-		height:auto;
-		position: fixed;
-		z-index: 500;
-		top: 55px;
-		right: 0;
-		background-color: white;
-		overflow-x: hidden;
-		transition: 0.5s;
-		margin-top: 2px;
-		margin-right: 7px;
-		box-shadow: 0 0 20px rgba(0,0,0,3);
-		opacity:.9;
-	}
+.search-all {
+	height: 100%;
+	width: 25%;
+	height:auto;
+	position: fixed;
+	z-index: 500;
+	top: 55px;
+	right: 0;
+	background-color: white;
+	overflow-x: hidden;
+	transition: 0.5s;
+	margin-top: 2px;
+	margin-right: 7px;
+	box-shadow: 0 0 20px rgba(0,0,0,3);
+	opacity:.9;
+}
 
 </style>
