@@ -3,10 +3,10 @@
 
 		<div id="mySidenav" class="sidenav">
 
-			<div class="panel-header sticky-top" style="background-color: white;"><h1>PARSELLER <a href="#" class="closebtn" v-on:click="parcelPanel()"><i class="fa fa-chevron-left"></i></a></h1></div>
-			<form class="form-inline my-2 my-lg-0">
-				<input class="form-control mr-sm-2" type="text" aria-label="Ara" placeholder="Ada/Parsel Yazınız">
-				<button v-on:click="fetchParcels()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Ara</button>
+			<div class="panel-header sticky-top" style="background-color: white;"><h1>PARSELLER<a href="#" class="closebtn" v-on:click="parcelPanel()"><i class="fa fa-chevron-left"></i></a></h1></div>
+			<form class="searchForm form-inline my-2 my-lg-0">
+				<input v-model="parselSearchTxt" class="form-control mr-sm-2" type="text" aria-label="Ara" placeholder="Ada/Parsel Yazınız">
+				<button v-on:click="fetchParcels($event)" class="btn btn-outline-success my-2 my-sm-0" type="submit">Ara</button>
 			</form>
 			<br>
 			<loading-screen ref="loadingScreen" :loadingText="loadingTextTr">
@@ -20,7 +20,7 @@
 					<tbody>
 						<tr v-for="parcel in parcels">
 							<td>
-								<button v-on:click="zoomParcel()" type="button" class="btn btn-outline-info btn-sm" href="#" data-toggle="tooltip" title="Göster!">{{parcel.properties.ada_parsel}}</button>
+								<button v-on:click="zoomParcel(parcel.geometry, parcel.properties.ada_parsel)" type="button" class="btn btn-outline-info btn-sm" href="#" data-toggle="tooltip" title="Göster!">{{parcel.properties.ada_parsel}}</button>
 							</td>
 							<td>{{parcel.properties.mahalle_id}}</td>
 						</tr>
@@ -40,13 +40,15 @@
 		data () {
 			return {
 				parcels : [],
-				collapsed : false
+				collapsed : false,
+				searchLayer : null,
+				parselSearchTxt : null
 			}
 		},
 		props: {
 			loadingTextTr: {
 				type: String,
-				default: 'Getiriyoruz!'
+				default: 'Lütfen Bekleyiniz!'
 			}
 		},
 		methods: { 
@@ -62,12 +64,23 @@
 				}
 
 			},
-			zoomParcel(){
-				this.$parent.map.setView([39.9 + Math.random() * 0.1, 32.9 + Math.random() * 0.1], 13);
+			zoomParcel(argGeometry, argName){
+				if(this.searchLayer != null){
+					this.$parent.map.removeLayer(this.searchLayer);
+				}
+				this.searchLayer = L.geoJSON(argGeometry);
+				this.searchLayer.addTo(this.$parent.map);
+				this.$parent.map.fitBounds(this.searchLayer.getBounds());
+				this.searchLayer.bindPopup("En şirin parsel benim " + argName).openPopup();
 			},
-			fetchParcels(){
+			fetchParcels(event){
+				event.preventDefault();
 				this.parcels = [];
-				const p = this.$http.get('http://saricicek.epac.to:8080/geoserver/urbanInfo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=urbanInfo:parcel&maxFeatures=10&outputFormat=application%2Fjson');
+				let url = this.dataUrl + "parcel";
+				if(this.parselSearchTxt){
+					url += "&CQL_FILTER=ada_parsel LIKE '%25" + this.parselSearchTxt + "%25'";
+				}
+				const p = this.$http.get(url);
 				this.$refs.loadingScreen.load(p);
 				p.then(function(response){
 					let parcelFeatures=[];
@@ -119,5 +132,11 @@
 	box-shadow: 0 0 5px rgba(0,0,0,1);
 }
 
-
+.table td, th {
+   text-align: center;   
+}
+.searchForm{
+	margin: 0 auto;
+	width:80%
+}
 </style>

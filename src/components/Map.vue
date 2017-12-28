@@ -12,8 +12,8 @@
 
 
 					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-search" aria-hidden="true"></i> Ara</a>
-						<div class="dropdown-menu" style="background-color: #343a40 " aria-labelledby="dropdown01">
+						<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-search" aria-hidden="true"></i> Listele</a>
+						<div class="dropdown-menu navDropDown" aria-labelledby="dropdown01">
 							<a v-on:click="parcelPanel()" class="nav-link" href="#"><i class="fa fa-th-large" aria-hidden="true"></i> Parsel</a>
 							<a v-on:click="doorPanel()" class="nav-link" href="#"><i class="fa fa-circle-o" aria-hidden="true"></i> Kapı</a>
 							<a v-on:click="roadPanel()" class="nav-link" href="#"><i class="fa fa-exchange" aria-hidden="true"></i> Yol</a>
@@ -31,8 +31,8 @@
 			</form>
 		</div>
 	</nav>
-	<div class="search-all text-center" v-if="cars.length > 0">
-		<ul v-for="car in cars" class="list-group">
+	<div class="search-all text-center" v-if="searchedData.length > 0">
+		<ul v-for="car in searchedData" class="list-group">
 			<li class="list-group-item d-flex justify-content-between align-items-center">{{car.name}}
 				<span class="badge badge-primary badge-pill">14</span></li>
 			</ul>
@@ -41,10 +41,7 @@
 		</div>
 
 		<Parcel ref="parcel"/>
-		<div id="map" style="height: 2000px;">
-
-		</div>
-
+		<div id="map"/>
 
 	</div>
 </template>
@@ -56,15 +53,15 @@
 		data : function() {
 			return {
 				map : null,
-				cars: []
+				searchedData : []
 			}
 		},
 		mounted() {
+			document.getElementById("map").style.height = (document.documentElement.clientHeight - 57)+ "px";
 			this.map = L.map('map',{ zoomControl:false }).setView([39.9, 32.9], 13);
+			this.map.invalidateSize();
 			L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 			}).addTo(this.map);
-
-			document.getElementById("map").style.height = document.documentElement.clientHeight + "px";
 		},
 		methods: { 
 			parcelPanel(){
@@ -72,16 +69,12 @@
 				parcelVue.parcelPanel();
 			},
 			searchAll(event){
-				this.cars = 
-				[
-				{ "name":"Mahalle",},
-				{ "name":"Parsel", },
-				{ "name":"Önemli Nokta" }
-				];
+				this.searchedData = 
+				[{ "name":"Mahalle",},{ "name":"Parsel", },{ "name":"Önemli Nokta" }];
 				event.preventDefault();
 			},
 			clearSearchResult(){
-				this.cars = [];
+				this.searchedData = [];
 			}
 		},
 		components: {
@@ -95,8 +88,8 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #map {
-	width: auto;
-	height: 100%;
+	width: 100%;
+	height: 1000px;
 	margin-top: 57px;
 }
 
@@ -115,6 +108,10 @@
 	margin-right: 7px;
 	box-shadow: 0 0 20px rgba(0,0,0,3);
 	opacity:.9;
+}
+
+.navDropDown{
+	background-color: #343a40;
 }
 
 </style>
