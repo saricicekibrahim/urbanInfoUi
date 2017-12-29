@@ -66,7 +66,7 @@
 			}).addTo(this.map);
 
 			L.tileLayer.wms(this.layerUrl, {
-    		layers: 'urbanInfo:cluster_parcel', transparent:true, format:'image/png'
+				layers: 'urbanInfo:cluster_parcel', transparent:true, format:'image/png'
 			}).addTo(this.map);
 		},
 		methods: { 

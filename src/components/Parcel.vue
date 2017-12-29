@@ -85,9 +85,9 @@
 				p.then(function(response){
 					let parcelFeatures=[];
 					$.each(response.body.features, function(key, value) {
-     					parcelFeatures.push(value);
-   					});
-   					this.parcels = parcelFeatures;
+						parcelFeatures.push(value);
+					});
+					this.parcels = parcelFeatures;
 				});
 			}
 
@@ -133,7 +133,7 @@
 }
 
 .table td, th {
-   text-align: center;   
+	text-align: center;   
 }
 .searchForm{
 	margin: 0 auto;
