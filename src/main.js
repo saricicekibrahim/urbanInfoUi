@@ -12,22 +12,26 @@ Vue.use(vueResource)
 Vue.config.productionTip = false
 
 Vue.mixin({
-  data: function() {
-    return {
-      get dataUrl() {
-        return "http://saricicek.epac.to:8080/geoserver/urbanInfo/ows?service=WFS" +
-        "&version=1.0.0&request=GetFeature&maxFeatures=100&outputFormat=application%2Fjson" +
-        "&typeName=urbanInfo:";
-      }
-    }
-  }
+	data: function() {
+		let mainUrl = "http://saricicek.epac.to:8080/geoserver/urbanInfo";
+		return {
+			get dataUrl() {
+				return mainUrl + "/ows?service=WFS" +
+				"&version=1.0.0&request=GetFeature&maxFeatures=100&outputFormat=application%2Fjson" +
+				"&typeName=urbanInfo:";
+			},
+			get layerUrl() {
+				return mainUrl + "/wms?";
+			}
+		}
+	}
 })
 
 /* eslint-disable no-new */
 new Vue({
-  el:'#app',
-  template : '<Map/>',
-  components : {Map}
+	el:'#app',
+	template : '<Map/>',
+	components : {Map}
 });
 
 

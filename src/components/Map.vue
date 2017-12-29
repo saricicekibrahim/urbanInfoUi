@@ -58,9 +58,15 @@
 		},
 		mounted() {
 			document.getElementById("map").style.height = (document.documentElement.clientHeight - 57)+ "px";
-			this.map = L.map('map',{ zoomControl:false }).setView([39.9, 32.9], 13);
+			this.map = L.map('map',{ zoomControl:false }).setView([39.961, 32.878], 15);
+			this.map.options.minZoom = 15;
+			this.map.options.maxZoom = 18;
 			this.map.invalidateSize();
 			L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+			}).addTo(this.map);
+
+			L.tileLayer.wms(this.layerUrl, {
+    		layers: 'urbanInfo:cluster_parcel', transparent:true, format:'image/png'
 			}).addTo(this.map);
 		},
 		methods: { 
