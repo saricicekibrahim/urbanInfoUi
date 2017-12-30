@@ -15,13 +15,13 @@
 						<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-search" aria-hidden="true"></i> Listele</a>
 						<div class="dropdown-menu navDropDown" aria-labelledby="dropdown01">
 							<a v-on:click="parcelPanel()" class="nav-link" href="#"><i class="fa fa-th-large" aria-hidden="true"></i> Parsel</a>
-							<a v-on:click="doorPanel()" class="nav-link" href="#"><i class="fa fa-circle-o" aria-hidden="true"></i> Kapı</a>
-							<a v-on:click="roadPanel()" class="nav-link" href="#"><i class="fa fa-exchange" aria-hidden="true"></i> Yol</a>
-							<a v-on:click="poiPanel()" class="nav-link" href="#"><i class="fa fa-map-pin" aria-hidden="true"></i> Önemli Nokta</a>
+							<a v-on:click="alert();" class="nav-link" href="#"><i class="fa fa-circle-o" aria-hidden="true"></i> Kapı</a>
+							<a v-on:click="alert();" class="nav-link" href="#"><i class="fa fa-exchange" aria-hidden="true"></i> Yol</a>
+							<a v-on:click="alert();" class="nav-link" href="#"><i class="fa fa-map-pin" aria-hidden="true"></i> Önemli Nokta</a>
 						</div>
 					</li>
 					<li class="nav-item">
-						<a v-on:click="parcelPanel()" class="nav-link" href="#"><i class="fa fa-file-text" aria-hidden="true"></i> İmar Durumu</a>          
+						<a v-on:click="alert();" class="nav-link" href="#"><i class="fa fa-file-text" aria-hidden="true"></i> İmar Durumu</a>          
 					</li>
 				</ul>
 			</li>
@@ -58,15 +58,22 @@
 		},
 		mounted() {
 			document.getElementById("map").style.height = (document.documentElement.clientHeight - 57)+ "px";
-			this.map = L.map('map',{ zoomControl:false }).setView([39.961, 32.878], 15);
-			this.map.options.minZoom = 15;
-			this.map.options.maxZoom = 18;
+			this.map = L.map('map',{ minZoom:15, maxZoom:19, zoomControl:false,
+			bounceAtZoomLimits: false }).setView([39.961, 32.878], 16);
 			this.map.invalidateSize();
-			L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+			L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {minZoom:15, maxZoom:19
 			}).addTo(this.map);
 
 			L.tileLayer.wms(this.layerUrl, {
-				layers: 'urbanInfo:cluster_parcel', transparent:true, format:'image/png'
+				layers: 'urbanInfo:building', transparent:true, format:'image/png', minZoom:15, maxZoom:19
+			}).addTo(this.map);
+
+			L.tileLayer.wms(this.layerUrl, {
+				layers: 'urbanInfo:cluster_parcel', transparent:true, format:'image/png', minZoom:15, maxZoom:19
+			}).addTo(this.map);
+
+			L.tileLayer.wms(this.layerUrl, {
+				layers: 'urbanInfo:imar_detay', transparent:true, format:'image/png', minZoom:15, maxZoom:19
 			}).addTo(this.map);
 		},
 		methods: { 
@@ -81,6 +88,9 @@
 			},
 			clearSearchResult(){
 				this.searchedData = [];
+			},
+			alert(){
+				alert('not ready yet');
 			}
 		},
 		components: {
