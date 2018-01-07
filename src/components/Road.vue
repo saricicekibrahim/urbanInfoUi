@@ -1,28 +1,26 @@
 <template>
 	<div>
 
-		<div id="parcelPanel" class="sidenav">
+		<div id="roadPanel" class="sidenav">
 
-			<div class="panel-header sticky-top" style="background-color: white;"><h1>PARSELLER<a href="#" class="closebtn" v-on:click="openPanel()"><i class="fa fa-chevron-left"></i></a></h1></div>
+			<div class="panel-header sticky-top" style="background-color: white;"><h1>YOLLAR<a href="#" class="closebtn" v-on:click="openPanel()"><i class="fa fa-chevron-left"></i></a></h1></div>
 			<form class="searchForm form-inline my-2 my-lg-0">
 				<input v-model="parselSearchTxt" class="form-control mr-sm-2" type="text" aria-label="Ara" placeholder="Ada/Parsel Yazınız">
-				<button v-on:click="fetchParcels($event)" class="btn btn-outline-success my-2 my-sm-0" type="submit">Ara</button>
+				<button v-on:click="fetchRoads($event)" class="btn btn-outline-success my-2 my-sm-0" type="submit">Ara</button>
 			</form>
 			<br>
 			<loading-screen ref="loadingScreen" :loadingText="loadingTextTr">
-				<table v-if="parcels.length > 0" class="table table-striped">
+				<table v-if="roads.length > 0" class="table table-striped">
 					<thead>
 						<tr>
-							<th>Parsel No</th>
-							<th>Mahalle</th>
+							<th>Yol Adı</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="parcel in parcels">
+						<tr v-for="road in roads">
 							<td>
-								<button v-on:click="zoomParcel(parcel.geometry, parcel.properties.ada_parsel)" type="button" class="btn btn-outline-info btn-sm" href="#" data-toggle="tooltip" title="Göster!">{{parcel.properties.ada_parsel}}</button>
+								<button v-on:click="zoomRoad(road.geometry, road.properties.adi)" type="button" class="btn btn-outline-info btn-sm" href="#" data-toggle="tooltip" title="Göster!">{{road.properties.adi}}</button>
 							</td>
-							<td>{{parcel.properties.mahalle_id}}</td>
 						</tr>
 					</tbody>
 				</table>	
@@ -39,7 +37,7 @@
 		name: 'Panel',
 		data () {
 			return {
-				parcels : [],
+				roads : [],
 				collapsed : false,
 				searchLayer : null,
 				parselSearchTxt : null
@@ -55,39 +53,37 @@
 			openPanel() {
 				if(this.collapsed)
 				{
-					document.getElementById("parcelPanel").style.width = "0";
+					document.getElementById("roadPanel").style.width = "0";
 					this.collapsed = false;
 				}
 				else{
-					document.getElementById("parcelPanel").style.width = document.documentElement.clientWidth / 4 + "px";
+					document.getElementById("parcelPanel").style.width = "0";
+					document.getElementById("roadPanel").style.width = document.documentElement.clientWidth / 4 + "px";
 					this.collapsed = true;
 				}
 
 			},
-			zoomParcel(argGeometry, argName){
+			zoomRoad(argGeometry, argName){
 				if(this.searchLayer != null){
 					this.$parent.map.removeLayer(this.searchLayer);
 				}
 				this.searchLayer = L.geoJSON(argGeometry);
 				this.searchLayer.addTo(this.$parent.map);
 				this.$parent.map.fitBounds(this.searchLayer.getBounds());
-				this.searchLayer.bindPopup("En şirin parsel benim " + argName).openPopup();
+				this.searchLayer.bindPopup("En şirin yol benim " + argName).openPopup();
 			},
-			fetchParcels(event){
+			fetchRoads(event){
 				event.preventDefault();
-				this.parcels = [];
-				let url = this.dataUrl + "parcel";
-				if(this.parselSearchTxt){
-					url += "&CQL_FILTER=ada_parsel LIKE '%25" + this.parselSearchTxt + "%25'";
-				}
+				this.roads = [];
+				let url = this.dataUrl + "road";
 				const p = this.$http.get(url);
 				this.$refs.loadingScreen.load(p);
 				p.then(function(response){
-					let parcelFeatures=[];
+					let roadFeatures=[];
 					$.each(response.body.features, function(key, value) {
-						parcelFeatures.push(value);
+						roadFeatures.push(value);
 					});
-					this.parcels = parcelFeatures;
+					this.roads = roadFeatures;
 				});
 			}
 

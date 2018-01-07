@@ -14,9 +14,9 @@
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-search" aria-hidden="true"></i> Listele</a>
 						<div class="dropdown-menu navDropDown" aria-labelledby="dropdown01">
-							<a v-on:click="parcelPanel()" class="nav-link" href="#"><i class="fa fa-th-large" aria-hidden="true"></i> Parsel</a>
+							<a v-on:click="openParcelPanel()" class="nav-link" href="#"><i class="fa fa-th-large" aria-hidden="true"></i> Parsel</a>
 							<a v-on:click="alert();" class="nav-link" href="#"><i class="fa fa-circle-o" aria-hidden="true"></i> Kapı</a>
-							<a v-on:click="alert();" class="nav-link" href="#"><i class="fa fa-exchange" aria-hidden="true"></i> Yol</a>
+							<a v-on:click="openRoadPanel();" class="nav-link" href="#"><i class="fa fa-exchange" aria-hidden="true"></i> Yol</a>
 							<a v-on:click="alert();" class="nav-link" href="#"><i class="fa fa-map-pin" aria-hidden="true"></i> Önemli Nokta</a>
 						</div>
 					</li>
@@ -41,6 +41,7 @@
 		</div>
 
 		<Parcel ref="parcel"/>
+		<Road ref="road"/>
 		<div id="map"/>
 
 	</div>
@@ -48,6 +49,7 @@
 
 <script>
 	import Parcel from './Parcel'
+	import Road from './Road'
 	export default {
 		name: 'Map',
 		data : function() {
@@ -58,11 +60,9 @@
 		},
 		mounted() {
 			document.getElementById("map").style.height = (document.documentElement.clientHeight - 57)+ "px";
-			this.map = L.map('map',{ minZoom:15, maxZoom:19, zoomControl:false,
-			bounceAtZoomLimits: false }).setView([39.961, 32.878], 16);
+			this.map = L.map('map',{ minZoom:15, maxZoom:19, zoomControl:false, bounceAtZoomLimits: false }).setView([39.961, 32.878], 16);
 			this.map.invalidateSize();
-			L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {minZoom:15, maxZoom:19
-			}).addTo(this.map);
+			L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {minZoom:15, maxZoom:19}).addTo(this.map);
 
 			L.tileLayer.wms(this.layerUrl, {
 				layers: 'urbanInfo:building', transparent:true, format:'image/png', minZoom:15, maxZoom:19
@@ -77,9 +77,13 @@
 			}).addTo(this.map);
 		},
 		methods: { 
-			parcelPanel(){
+			openParcelPanel(){
 				var parcelVue = this.$refs.parcel;
-				parcelVue.parcelPanel();
+				parcelVue.openPanel();
+			},
+			openRoadPanel(){
+				var roadVue = this.$refs.road;
+				roadVue.openPanel();
 			},
 			searchAll(event){
 				this.searchedData = 
@@ -94,7 +98,8 @@
 			}
 		},
 		components: {
-			Parcel
+			Parcel,
+			Road
 		}
 	}
 
