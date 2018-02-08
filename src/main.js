@@ -13,15 +13,15 @@ Vue.config.productionTip = false
 
 Vue.mixin({
 	data: function() {
-		let mainUrl = "http://saricicek.epac.to:8080/geoserver/urbanInfo";
+		let mainUrl = "http://saricicek.epac.to:8080/geoserver";
 		return {
 			get dataUrl() {
-				return mainUrl + "/ows?service=WFS" +
+				return mainUrl + "/urbanInfo/ows?service=WFS" +
 				"&version=1.0.0&request=GetFeature&maxFeatures=100&outputFormat=application%2Fjson" +
 				"&typeName=urbanInfo:";
 			},
 			get layerUrl() {
-				return mainUrl + "/wms?";
+				return mainUrl + "/gwc/service/wms";
 			}
 		}
 	}

@@ -1,16 +1,16 @@
 <template>
 	<div>
 
-		<div id="roadPanel" class="sidenav">
+		<div id="entrancePanel" class="sidenav">
 
-			<div class="panel-header sticky-top" style="background-color: white;"><h1>YOLLAR<a href="#" class="closebtn" v-on:click="openPanel()"><i class="fa fa-chevron-left"></i></a></h1></div>
+			<div class="panel-header sticky-top" style="background-color: white;"><h1>KAPILAR<a href="#" class="closebtn" v-on:click="openPanel()"><i class="fa fa-chevron-left"></i></a></h1></div>
 			<form class="searchForm row form-horizontal">
 				             
                 <div class="col-8">
-				<input v-model="roadSearchTxt" class="form-control" type="text" aria-label="Ara" placeholder="Yol Adı Yazınız">
+				<input v-model="entranceSearchTxt" class="form-control" type="text" aria-label="Ara" placeholder="Kapı No Yazınız">
                 </div>
                 <div class="col-4">
-				<button v-on:click="fetchRoads($event)" class="btn btn-outline-success" type="submit">Ara</button>
+				<button v-on:click="fetchEntrances($event)" class="btn btn-outline-success" type="submit">Ara</button>
                 
               </div>
               </form>
@@ -18,16 +18,16 @@
 
 			<br>
 			<loading-screen ref="loadingScreen" :loadingText="loadingTextTr">
-				<table v-if="roads.length > 0" class="table table-striped">
+				<table v-if="entrances.length > 0" class="table table-striped">
 					<thead>
 						<tr>
-							<th>Yol Adı</th>
+							<th>Kapı No</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="road in roads">
+						<tr v-for="entrance in entrances">
 							<td>
-								<button v-on:click="zoomRoad(road.geometry, road.properties.adi)" type="button" class="btn btn-outline-info btn-sm" href="#" data-toggle="tooltip" title="Göster!">{{road.properties.adi}}</button>
+								<button v-on:click="zoomEntrance(entrance.geometry, entrance.properties.bina_no)" type="button" class="btn btn-outline-info btn-sm" href="#" data-toggle="tooltip" title="Göster!">{{entrance.properties.bina_no}}</button>
 							</td>
 						</tr>
 					</tbody>
@@ -45,10 +45,10 @@ export default {
   name: "Panel",
   data() {
     return {
-      roads: [],
+      entrances: [],
       collapsed: false,
       searchLayer: null,
-      roadSearchTxt: null
+      entranceSearchTxt: null
     };
   },
   props: {
@@ -60,47 +60,47 @@ export default {
   methods: {
     openPanel() {
       if (this.collapsed) {
-        $("#roadPanel")[0].style.width = 0;
+        $("#entrancePanel")[0].style.width = 0;
         this.collapsed = false;
       } else {
         $("#parcelPanel")[0].style.width = 0;
-        $("#entrancePanel")[0].style.width = 0;
-        $("#roadPanel")[0].style.width =
+        $("#roadPanel")[0].style.width = 0;
+        $("#entrancePanel")[0].style.width =
           document.documentElement.clientWidth / 4 + "px";
 
         this.collapsed = true;
         this.$parent.$refs.parcel.collapsed = false;
-        this.$parent.$refs.entrance.collapsed = false;
+        this.$parent.$refs.road.collapsed = false;
       }
     },
-    zoomRoad(argGeometry, argName) {
+    zoomEntrance(argGeometry, argName) {
       if (this.searchLayer != null) {
         this.$parent.map.removeLayer(this.searchLayer);
       }
       this.searchLayer = L.geoJSON(argGeometry);
       this.searchLayer.addTo(this.$parent.map);
       this.$parent.map.fitBounds(this.searchLayer.getBounds());
-      this.searchLayer.bindPopup("En şirin yol benim " + argName).openPopup();
+      this.searchLayer.bindPopup("En şirin kapı benim " + argName).openPopup();
     },
-    fetchRoads(event) {
+    fetchEntrances(event) {
       event.preventDefault();
-      this.roads = [];
-      let url = this.dataUrl + "road";
+      this.entrances = [];
+      let url = this.dataUrl + "entrance";
 
-      if (this.roadSearchTxt) {
+      if (this.entranceSearchTxt) {
         url +=
-          "&CQL_FILTER=adi LIKE '%25" + this.roadSearchTxt.toLocaleUpperCase('tr-TR') + "%25'";
+          "&CQL_FILTER=bina_no LIKE '%25" + this.entranceSearchTxt.toLocaleUpperCase('tr-TR') + "%25'";
       }
 
 console.log(url);
       const p = this.$http.get(url);
       this.$refs.loadingScreen.load(p);
       p.then(function(response) {
-        let roadFeatures = [];
+        let entranceFeatures = [];
         $.each(response.body.features, function(key, value) {
-          roadFeatures.push(value);
+          entranceFeatures.push(value);
         });
-        this.roads = roadFeatures;
+        this.entrances = entranceFeatures;
       });
     }
   },
