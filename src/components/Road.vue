@@ -65,8 +65,12 @@ export default {
       } else {
         $("#parcelPanel")[0].style.width = 0;
         $("#entrancePanel")[0].style.width = 0;
-        $("#roadPanel")[0].style.width =
-          document.documentElement.clientWidth / 4 + "px";
+        let windowWidth = document.documentElement.clientWidth;
+        if (windowWidth <= 1000) {
+          $("#roadPanel")[0].style.width = windowWidth + "px";
+        } else {
+          $("#roadPanel")[0].style.width = windowWidth / 4 + "px";
+        }
 
         this.collapsed = true;
         this.$parent.$refs.parcel.collapsed = false;
